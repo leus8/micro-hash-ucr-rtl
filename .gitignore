@@ -4,6 +4,8 @@ layout
 log
 synthesis
 source/*.ys
+source/*.blif
 *.sh
 .magicrc
 sistema.par
+temp
