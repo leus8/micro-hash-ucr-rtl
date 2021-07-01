@@ -1,20 +1,26 @@
-build: build-speed
+SPEED = sistema_speed
+SPEED_TB = $(SPEED)_tb
 
-build-speed:
-	mkdir -p build
-	mkdir -p waves
-	iverilog -o build/testbench src/hash_speed/testbench.v
-	vvp build/testbench
-	mv hash_speed.vcd waves/hash_speed.vcd
+all: sim
 
-all: 
-	build
+synth-speed:
+	mkdir -p layout synthesis log
+	qflow synthesize -T osu018 $(SPEED)
+	qflow cleanup $(SPEED)
+	rm -rf .magicrc sistema.par
+
+sim: sim-speed
+
+sim-speed:
+	mkdir -p sim waves
+	iverilog -o sim/$(SPEED_TB) test/$(SPEED_TB).v
+	vvp sim/$(SPEED_TB)
+	mv $(SPEED).vcd waves/$(SPEED).vcd
 
 waves: waves-speed
 
-waves-speed: build-speed
-	gtkwave waves/hash_speed.vcd
+waves-speed: sim-speed
+	gtkwave waves/$(SPEED).vcd
 
 clean: 
-	rm -rf build
-	rm -rf waves
+	rm -rf sim waves layout synthesis log source/*.ys *.sh *.magicrc

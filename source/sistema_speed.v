@@ -7,7 +7,7 @@ module half_adder (a, b, s, carry);
   assign carry = a & b;
 endmodule 
 
-module full_adder (a, b, c, s, carry);
+module sistema_speed (a, b, c, s, carry);
   input  a, b, c;
   output s, carry;
  

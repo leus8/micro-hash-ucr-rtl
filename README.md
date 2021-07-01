@@ -24,8 +24,26 @@ git clone github.com/leus8/micro-ucr-hash-rtl.git
 ```
 ## Usage
 ### Simulate design testbench and show wave output
+Area oriented system:
+```
+make waves-area
+```
+Speed oriented system:
+```
+make waves-speed
+```
+Both systems
 ```
 make waves
+```
+### Synthesize with Qflow (Yosys)
+Area oriented system:
+```
+make synth-area
+```
+Speed oriented system:
+```
+make synth-speed
 ```
 ### Clean workspace
 ```

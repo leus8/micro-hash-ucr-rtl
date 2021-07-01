@@ -1,2 +1,9 @@
-build
+sim
 waves
+layout
+log
+synthesis
+source/*.ys
+*.sh
+.magicrc
+sistema.par
