@@ -54,6 +54,10 @@ sta-area: place-area
 # routed result
 all-speed: prep
 	qflow all -T osu018 $(SPEED)
+
+# Run all qflow steps for area system and display 
+# routed result
+all-area: prep
 	qflow all -T osu018 $(AREA)
 
 # Generate behavioral sim for both systems
