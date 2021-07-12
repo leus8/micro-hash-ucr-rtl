@@ -1,6 +1,9 @@
+`timescale 1ns/100ps
+
 `include "source/sistema_area.v"
 // Testbench
 module test;
+
     reg clk, active;
     reg [7:0] target;
     reg [95:0] payload;
@@ -28,10 +31,6 @@ module test;
         @(posedge clk);
 
         while (~terminado) @(posedge clk);
-
-        // for (i = 0; i < 320; i = i + 1) begin
-        //     @(posedge clk);
-        // end
 
         $finish;
 

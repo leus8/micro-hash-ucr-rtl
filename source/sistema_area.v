@@ -16,8 +16,14 @@ module concatenador (clk, payload, active, nonce, bloque);
     input [31:0] nonce;
     output reg [127:0] bloque;
 
-    always @(*) begin
-        bloque = {payload,nonce};
+    always @(posedge clk) begin
+
+        if (~active) begin
+            bloque <= 0;
+        end
+        else begin
+            bloque <= {payload,nonce};
+        end
     end
 
 endmodule
@@ -35,7 +41,7 @@ module nextNonce (clk, active, nonce);
     output reg [31:0] nonce;
 
     always @(posedge clk) begin
-        if (~active) nonce <= 32'h01001b23;
+        if (~active) nonce <= 32'h01001b23 - 16'h03e8;
         else nonce <= nonce + 1;  // 32'hfded873c; 32'h01001b23;
     end
 
@@ -64,7 +70,7 @@ module validateOutput (clk, active, target, hashOutput, terminado, validNonce, n
             hashOut = 0;
         end
         else begin
-            if (hashOutput[7:0] < target && hashOutput[15:8] < target) begin
+            if (hashOutput[23:16] < target && hashOutput[15:8] < target) begin
                 terminado = 1;
                 hashOut = hashOutput;
                 nonceOut = validNonce;
@@ -93,64 +99,13 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
     integer i,j;
 
     always @(*) begin
-        w[15] = bloque[7:0];
-        w[14] = bloque[15:8];
-        w[13] = bloque[23:16];
-        w[12] = bloque[31:24];
-        w[11] = bloque[39:32];
-        w[10] = bloque[47:40];
-        w[9] = bloque[55:48];
-        w[8] = bloque[63:56];
-        w[7] = bloque[71:64];
-        w[6] = bloque[79:72];
-        w[5] = bloque[87:80];
-        w[4] = bloque[95:88];
-        w[3] = bloque[103:96];
-        w[2] = bloque[111:104];
-        w[1] = bloque[119:112];
-        w[0] = bloque[127:120];
 
-        for (i = 16; i < 32; i = i + 1) begin
-            w [i] = w[i-3] | (w[i-9] ^ w[i-14]);
-        end
-
-        h[0] = 8'h01;
-        h[1] = 8'h89;
-        h[2] = 8'hfe;
-
-        a = h[0];
-        b = h[1];
-        c = h[2];
-
-        for (i = 0; i < 32; i = i + 1) begin
-            
-            if (i <= 16) begin
-                k = 8'h99;
-                q = a ^ b;
-            end
-            else begin
-                k = 8'ha1;
-                q = a | b;
-            end
-
-            a = b ^ c;
-            b = c << 4;
-            c = q + k + w [i];
-        end
-
-        h[0] = h[0] + a;
-        h[1] = h[1] + b;
-        h[2] = h[2] + c;
-    end
-
-    always @(posedge clk) begin
         if (~active) begin
-
             for (j = 0; j < 32; j = j+1) begin
                 w[j] <= 0;
             end
 
-            for (j = 0; j < 32; j = j+1) begin
+            for (j = 0; j < 3; j = j+1) begin
                 h[j] <= 8'hff;
             end
 
@@ -159,8 +114,66 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
             c <= 0;
             k <= 0;
             q <= 0;
+        end
+        else begin
+            
+            w[15] = bloque[7:0];
+            w[14] = bloque[15:8];
+            w[13] = bloque[23:16];
+            w[12] = bloque[31:24];
+            w[11] = bloque[39:32];
+            w[10] = bloque[47:40];
+            w[9] = bloque[55:48];
+            w[8] = bloque[63:56];
+            w[7] = bloque[71:64];
+            w[6] = bloque[79:72];
+            w[5] = bloque[87:80];
+            w[4] = bloque[95:88];
+            w[3] = bloque[103:96];
+            w[2] = bloque[111:104];
+            w[1] = bloque[119:112];
+            w[0] = bloque[127:120];
+
+            for (i = 16; i < 32; i = i + 1) begin
+                w [i] = w[i-3] | (w[i-9] ^ w[i-14]);
+            end
+
+            h[0] = 8'h01;
+            h[1] = 8'h89;
+            h[2] = 8'hfe;
+
+            a = h[0];
+            b = h[1];
+            c = h[2];
+
+            for (i = 0; i < 32; i = i + 1) begin
+                
+                if (i <= 16) begin
+                    k = 8'h99;
+                    q = a ^ b;
+                end
+                else begin
+                    k = 8'ha1;
+                    q = a | b;
+                end
+
+                a = b ^ c;
+                b = c << 4;
+                c = q + k + w [i];
+            end
+
+            h[0] = h[0] + a;
+            h[1] = h[1] + b;
+            h[2] = h[2] + c;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (~active) begin
+
             hashOutput <= 24'hffffff;
             validNonce <= 0;
+
         end 
         else begin
             

@@ -103,7 +103,7 @@ sim-synth-speed:
 # Generate behavioral and synth sim for area system
 sim-synth-area:
 	mkdir -p sim waves
-	sed -i 's/\bsistema_area\b/sistema_area_synth/g' synthesis/$(AREA_SYNTH).rtlbb.v
+	sed -i 's/\bsistema_area\b/sistema_area_synth/g' synthesis/$(AREA_SYNTH).rtlnopwr.v
 	iverilog -I /usr/share/qflow/tech/osu018 -T typ -o sim/$(AREA_SYNTH_TB) test/$(AREA_SYNTH_TB).v
 	vvp sim/$(AREA_SYNTH_TB)
 	mv $(AREA_SYNTH).vcd waves/$(AREA_SYNTH).vcd
