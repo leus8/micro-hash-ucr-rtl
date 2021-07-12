@@ -75,6 +75,11 @@ module validateOutput (clk, active, target, hashOutput, terminado, validNonce, n
                 hashOut = hashOutput;
                 nonceOut = validNonce;
             end
+            else begin
+                terminado = 0;
+                hashOut = 0;
+                nonceOut = 0;
+            end
         end
 
     end
@@ -96,17 +101,17 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
     reg [7:0] w [31:0];
     reg [7:0] h [2:0];
     reg [7:0] a, b, c, k, q;
-    integer i,j;
+    integer i;
 
     always @(*) begin
 
         if (~active) begin
-            for (j = 0; j < 32; j = j+1) begin
-                w[j] <= 0;
+            for (i = 0; i < 32; i = i+1) begin
+                w[i] <= 0;
             end
 
-            for (j = 0; j < 3; j = j+1) begin
-                h[j] <= 8'hff;
+            for (i = 0; i < 3; i = i+1) begin
+                h[i] <= 8'hff;
             end
 
             a <= 0;
@@ -176,7 +181,7 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
 
         end 
         else begin
-            
+
             hashOutput <= {h[0],h[1],h[2]};
             validNonce <= {w[12],w[13],w[14],w[15]};
 
