@@ -177,56 +177,6 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
         end 
         else begin
             
-            // w[15] <= bloque[7:0];
-            // w[14] <= bloque[15:8];
-            // w[13] <= bloque[23:16];
-            // w[12] <= bloque[31:24];
-            // w[11] <= bloque[39:32];
-            // w[10] <= bloque[47:40];
-            // w[9] <= bloque[55:48];
-            // w[8] <= bloque[63:56];
-            // w[7] <= bloque[71:64];
-            // w[6] <= bloque[79:72];
-            // w[5] <= bloque[87:80];
-            // w[4] <= bloque[95:88];
-            // w[3] <= bloque[103:96];
-            // w[2] <= bloque[111:104];
-            // w[1] <= bloque[119:112];
-            // w[0] <= bloque[127:120];
-
-            // for (j = 16; j <= 31; j = j + 1) begin
-            //     w [j] <= w[j-3] | (w[j-9] ^ w[j-14]);
-            // end
-
-            // h[0] <= 8'h01;
-            // h[1] <= 8'h89;
-            // h[2] <= 8'hfe;
-
-            // a <= h[0];
-            // b <= h[1];
-            // c <= h[2];
-
-            // for (j = 0; j < 32; j = j + 1) begin
-                
-            //     if (j <= 16) begin
-            //         k <= 8'h99;
-            //         q <= a ^ b;
-            //     end
-
-            //     else begin
-            //         k <= 8'ha1;
-            //         q <= a | b;
-            //     end
-
-            //     a <= b ^ c;
-            //     b <= c << 4;
-            //     c <= q + k + w [j];
-            // end
-
-            // h[0] <= h[0] + a;
-            // h[1] <= h[1] + b;
-            // h[2] <= h[2] + c;
-
             hashOutput <= {h[0],h[1],h[2]};
             validNonce <= {w[12],w[13],w[14],w[15]};
 
