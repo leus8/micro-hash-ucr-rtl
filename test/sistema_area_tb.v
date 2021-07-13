@@ -23,14 +23,20 @@ module test;
         for (i = 0; i < 3; i = i + 1) $dumpvars(0,sa.sa_hash.h[i]);
         
         active <= 0;
-        @(posedge clk);
-
-        active <= 1;
         payload <= 96'h397d9f2f40ca9e6c6b1f3324;
         target <= 8'h0a;
         @(posedge clk);
 
+        active <= 1;
+        @(posedge clk);
+
         while (~terminado) @(posedge clk);
+
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
 
         $finish;
 
