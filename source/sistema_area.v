@@ -192,6 +192,12 @@ module micro_ucr_hash (clk, active, bloque, hashOutput, validNonce);
 
 endmodule
 
+/* Module sistema_area
+sistema_area is the main system that encompasses nonce generation, hash creation
+and hashOutput checking. It receives a signal to start (active), a target (1
+byte) and a payload (12 bytes) and returns the first nonce that meets the
+target requirements according to the hashOutput returned by the hashing function.
+*/
 module sistema_area (clk, payload, active, target, terminado, nonceOut, hashOut);
     input clk, active;
     input [95:0] payload;
