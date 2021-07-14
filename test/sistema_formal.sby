@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 10
+
+[engines]
+smtbmc
+
+[script]
+read_verilog -formal sistema_formal_tb.v
+prep -top test
+
+[files]
+sistema_formal_tb.v
+../source/sistema_speed.v

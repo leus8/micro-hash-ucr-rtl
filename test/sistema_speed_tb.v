@@ -11,7 +11,7 @@ module test;
     wire [31:0] nonceOut;
 
     //DUT instance
-    sistema_speed ss(clk, payload, active, target, terminado, nonceOut, hashOut);
+    sistema_speed #(7) ss(clk, payload, active, target, terminado, nonceOut, hashOut);
 
     initial begin
 

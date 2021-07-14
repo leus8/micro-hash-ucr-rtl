@@ -94,11 +94,13 @@ sim-synth: sim-synth-speed sim-synth-area
 # Generate behavioral and synth sim for speed system
 sim-synth-speed:
 	mkdir -p sim waves
-	sed -i 's/\bsistema_speed\b/sistema_speed_synth/g' synthesis/$(SPEED_SYNTH).rtlbb.v
+	mv synthesis/$(SPEED).rtlnopwr.v synthesis/$(SPEED_SYNTH).rtlnopwr.v
+	sed -i 's/\bsistema_speed\b/sistema_speed_synth/g' synthesis/$(SPEED_SYNTH).rtlnopwr.v
 	iverilog -I /usr/share/qflow/tech/osu018 -T typ -o sim/$(SPEED_SYNTH_TB) test/$(SPEED_SYNTH_TB).v
 	vvp sim/$(SPEED_SYNTH_TB)
 	mv $(SPEED_SYNTH).vcd waves/$(SPEED_SYNTH).vcd
-	sed -i 's/\bsistema_speed_synth\b/sistema_speed/g' synthesis/$(SPEED_SYNTH).rtlbb.v
+	sed -i 's/\bsistema_speed_synth\b/sistema_speed/g' synthesis/$(SPEED_SYNTH).rtlnopwr.v
+	mv synthesis/$(SPEED_SYNTH).rtlnopwr.v synthesis/$(SPEED).rtlnopwr.v
 
 # Generate behavioral and synth sim for area system
 sim-synth-area:
@@ -107,7 +109,7 @@ sim-synth-area:
 	iverilog -I /usr/share/qflow/tech/osu018 -T typ -o sim/$(AREA_SYNTH_TB) test/$(AREA_SYNTH_TB).v
 	vvp sim/$(AREA_SYNTH_TB)
 	mv $(AREA_SYNTH).vcd waves/$(AREA_SYNTH).vcd
-	sed -i 's/\bsistema_area_synth\b/sistema_area/g' synthesis/$(AREA_SYNTH).rtlbb.v
+	sed -i 's/\bsistema_area_synth\b/sistema_area/g' synthesis/$(AREA_SYNTH).rtlnopwr.v
 
 # Display behavioral and synth waves for both systems
 waves-synth: waves-synth-speed sim-synth-area
@@ -124,4 +126,4 @@ waves-synth-area: sim-synth-area
 clean: 
 	qflow cleanup $(SPEED)
 	qflow cleanup $(AREA)
-	rm -rf sim waves layout synthesis log source/*.ys source/*.blif *.sh *.magicrc
+	rm -rf sim waves layout synthesis log source/*.ys source/*.blif *.sh *.magicrc test/sistema_formal

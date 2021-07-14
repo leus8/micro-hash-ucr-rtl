@@ -1,27 +1,42 @@
+`timescale 1 ns / 1 ps
 `include "osu018_stdcells.v"
 `include "source/sistema_speed.v"
-`include "synthesis/sistema_speed_synth.rtlbb.v"
+`include "synthesis/sistema_speed_synth.rtlnopwr.v"
+
 // Testbench
 module test;
-  reg a, b, c;
-  wire s, carry;
-  
-  // DUT instance
-  sistema_speed ss (a, b, c, s, carry);
+    reg clk, active;
+    reg [7:0] target;
+    reg [95:0] payload;
+    wire terminado;
+    wire [23:0] hashOut;
+    wire [31:0] nonceOut;
 
-  // Synthesized DUT instance
-  sistema_speed_synth sss (a, b, c, s, carry);
-  
-  initial begin
-    $dumpfile("sistema_speed_synth.vcd"); $dumpvars;
-    {a, b, c} <= 3'b000;
-    #1 {a, b, c} <= 3'b001;
-    #1 {a, b, c} <= 3'b010;
-    #1 {a, b, c} <= 3'b011;
-    #1 {a, b, c} <= 3'b100;
-    #1 {a, b, c} <= 3'b101;
-    #1 {a, b, c} <= 3'b110;
-    #1 {a, b, c} <= 3'b111;
-    #1 {a, b, c} <= 3'b111;
-  end
+    //DUT instance
+    sistema_speed #(7) ss(clk, payload, active, target, terminado, nonceOut, hashOut);
+
+    // Synthetized DUT instance
+    sistema_speed_synth sss(clk, payload, active, target, terminado, nonceOut, hashOut);
+
+    initial begin
+
+        $dumpfile("sistema_speed_synth.vcd"); $dumpvars;
+
+        active <= 0;
+        @(posedge clk);
+
+        active <= 1;
+        payload <= 96'h397d9f2f40ca9e6c6b1f3324;
+        target <= 8'h0a;
+        @(posedge clk);
+
+        while (~terminado) @(posedge clk);
+
+        $finish;
+
+    end
+
+    // clk generation
+    initial clk <= 0;
+    always #5 clk <= ~clk;
 endmodule

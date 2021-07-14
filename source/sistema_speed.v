@@ -35,11 +35,8 @@ module nextNonce (clk, active, initNonce, nonce);
     input [31:0] initNonce;
     output reg [31:0] nonce;
 
-    always @(posedge active) begin
-        nonce <= initNonce;
-    end
     always @(posedge clk) begin
-        if (~active) nonce <= 0;
+        if (~active) nonce <= initNonce;
         else nonce <= nonce + 1;
     end
 endmodule
@@ -65,7 +62,7 @@ module validateOutput (clk, active, target, hashOutput, valid, validNonce, nonce
             hashOut = 0;
         end
         else begin
-            if (hashOutput[23:16] < target && hashOutput[15:8] < target && ~valid) begin
+            if (hashOutput[23:16] < target && hashOutput[15:8] < target) begin
                 valid = 1;
                 hashOut = hashOutput;
                 nonceOut = validNonce;

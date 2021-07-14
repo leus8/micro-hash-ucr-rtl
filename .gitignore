@@ -5,6 +5,7 @@ log
 synthesis
 source/*.ys
 source/*.blif
+test/sistema_formal
 *.sh
 .magicrc
 sistema.par
