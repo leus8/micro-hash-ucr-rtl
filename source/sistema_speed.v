@@ -14,8 +14,13 @@ module concatenador (clk, payload, active, nonce, bloque);
     input [31:0] nonce;
     output reg [127:0] bloque;
 
-    always @(*) begin
-        bloque = {payload,nonce};
+    always @(posedge clk) begin
+        if (~active) begin
+            bloque <= 0;
+        end
+        else begin
+            bloque <= {payload,nonce};
+        end
     end
 endmodule
 
@@ -33,7 +38,6 @@ module nextNonce (clk, active, initNonce, nonce);
     always @(posedge active) begin
         nonce <= initNonce;
     end
-
     always @(posedge clk) begin
         if (~active) nonce <= 0;
         else nonce <= nonce + 1;
@@ -45,39 +49,29 @@ endmodule
 * validateOutput takes a HashOutput (3 bytes) and a target (1 byte) and returns true
 * if the first two bytes (little endian) are below the target.
 */
-module validateOutput (clk, active, target, hashOutput, terminado, validNonce, nonceOut, hashOut);
-
+module validateOutput (clk, active, target, hashOutput, valid, validNonce, nonceOut, hashOut);
     input clk, active;
     input [7:0] target;
     input [23:0] hashOutput;
     input [31:0] validNonce;
-    output reg terminado;
+    output reg valid;
     output reg [23:0] hashOut;
     output reg [31:0] nonceOut;
 
     always @(*) begin
-
         if (~active) begin
-            terminado = 0;
+            valid = 0;
             nonceOut = 0;
             hashOut = 0;
         end
         else begin
-            if (hashOutput[23:16] < target && hashOutput[15:8] < target) begin
-                terminado = 1;
+            if (hashOutput[23:16] < target && hashOutput[15:8] < target && ~valid) begin
+                valid = 1;
                 hashOut = hashOutput;
                 nonceOut = validNonce;
             end
-            else begin
-                terminado = 0;
-                hashOut = 0;
-                nonceOut = 0;
-            end
         end
-
     end
-
-
 endmodule
 
 /* Module micro_ucr_hash
@@ -198,10 +192,9 @@ module sis_speed (clk, payload, active, initNonce, target, valid, nonceOut, hash
     output [23:0] hashOut;
 
     wire [31:0] nonce;
+    wire [23:0] hashOutput;
     wire [31:0] validNonce;
     wire [127:0] bloque;
-    wire [23:0] hashOutput;
-    wire [23:0] hashOut;
  
     nextNonce ss_nxtn(clk, active, initNonce, nonce);
     concatenador ss_cat(clk, payload, active, nonce, bloque);  
@@ -217,14 +210,14 @@ byte) and a payload (12 bytes) and returns the first nonce that meets the
 target requirements according to the hashOutput returned by the hashing function.
 
 It is comprised of a parameterized number of sistemas that work in parallel to 
-obtain a valid nonce.
+obtain a valid nonce. There will be 2^N sistemas.
 
 The system divides the total possible conces in n sistemas that each start
 in a different nonce and start checking hashOutputs from there. The first
 sistema that obtains a valid hashOutput, returns the nonce and sets the flag
 terminado.
 */
-module sistema_speed #(parameter N=6) (clk, payload, active, target, terminado, nonceOut, hashOut);
+module sistema_speed #(parameter N=2) (clk, payload, active, target, terminado, nonceOut, hashOut);
     input clk, active;
     input [95:0] payload;
     input [7:0] target;
@@ -232,28 +225,29 @@ module sistema_speed #(parameter N=6) (clk, payload, active, target, terminado, 
     output reg [23:0] hashOut;
     output reg [31:0] nonceOut;
 
-    wire [N-1:0] valid;
-    wire [31:0] initNonces [N-1:0];
-    wire [23:0] hashOutput [N-1:0];
-    wire [31:0] validNonce [N-1:0];
+    wire [2**N-1:0] valid;
+    wire [31:0] initNonces [2**N-1:0];
+    wire [23:0] hashOutput [2**N-1:0];
+    wire [31:0] validNonce [2**N-1:0];
 
     genvar i;
     generate
-        for (i=0; i<N; i=i+1) begin 
-            assign initNonces[i] = (32'hffffffff/N)*i;
+        for (i=0; i<2**N; i=i+1) begin 
+            assign initNonces[i] = (32'hffffffff>>N)*i; // Division by right shifting N bits
             sis_speed s(clk, payload, active, initNonces[i], target, valid[i], validNonce[i], hashOutput[i]);
         end
     endgenerate
 
     integer j;
     always @(*) begin
-        for (j=0; j<N; j = j + 1) begin
+        for (j=0; j<2**N; j = j + 1) begin
             if (valid[j] == 1) begin
                 nonceOut = validNonce[j];
                 hashOut = hashOutput[j];
             end
         end
     end
-
+    
+    // sistema_speed will finish when any valid is found
     assign terminado = |valid;
 endmodule

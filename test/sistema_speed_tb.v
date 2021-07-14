@@ -9,7 +9,6 @@ module test;
     wire terminado;
     wire [23:0] hashOut;
     wire [31:0] nonceOut;
-    integer i;
 
     //DUT instance
     sistema_speed ss(clk, payload, active, target, terminado, nonceOut, hashOut);
@@ -23,7 +22,7 @@ module test;
 
         active <= 1;
         payload <= 96'h397d9f2f40ca9e6c6b1f3324;
-        target <= 10;
+        target <= 8'h0a;
         @(posedge clk);
 
         while (~terminado) @(posedge clk);
@@ -35,6 +34,4 @@ module test;
     // clk generation
     initial clk <= 0;
     always #5 clk <= ~clk;
-
-
 endmodule
