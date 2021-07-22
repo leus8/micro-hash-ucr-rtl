@@ -8,6 +8,8 @@ AREA_TB = $(AREA)_tb
 AREA_SYNTH = $(AREA)_synth
 AREA_SYNTH_TB = $(AREA_SYNTH)_tb
 
+HCELL = heatmaps/cell
+
 
 all: sim
 
@@ -121,6 +123,16 @@ waves-synth-speed: sim-synth-speed
 # Display behavioral and synth waves for area system
 waves-synth-area: sim-synth-area
 	gtkwave waves/$(AREA_SYNTH).vcd
+
+# Generate cell density heatmap for area system
+heatmap-cell-area:
+	touch -c $(AREA)_coordinates.csv
+	sed -n -e '/COMPONENTS.*;/,/END COMPONENTS/ p' layout/$(AREA).def > $(HCELL)/$(AREA)_coordinates.csv
+	sed -i '/- FILL/ d' $(HCELL)/$(AREA)_coordinates.csv
+	sed -i '1d;$d' $(HCELL)/$(AREA)_coordinates.csv
+	sed -i 's/.*( \(.*\) ).*/\1/' $(HCELL)/$(AREA)_coordinates.csv
+	sed -i 's/ /,/' $(HCELL)/$(AREA)_coordinates.csv
+	sed -i '1 i\x,y' $(HCELL)/$(AREA)_coordinates.csv
 
 # Clean workspace
 clean: 

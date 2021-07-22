@@ -10,3 +10,4 @@ test/sistema_formal
 .magicrc
 sistema.par
 temp
+heatmaps/cell/sistema_area_coordinates.csv
