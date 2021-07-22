@@ -126,13 +126,12 @@ waves-synth-area: sim-synth-area
 
 # Generate cell density heatmap for area system
 heatmap-cell-area:
-	touch -c $(AREA)_coordinates.csv
 	sed -n -e '/COMPONENTS.*;/,/END COMPONENTS/ p' layout/$(AREA).def > $(HCELL)/$(AREA)_coordinates.csv
 	sed -i '/- FILL/ d' $(HCELL)/$(AREA)_coordinates.csv
-	sed -i '1d;$d' $(HCELL)/$(AREA)_coordinates.csv
+	sed -i '1d;$$d' $(HCELL)/$(AREA)_coordinates.csv
 	sed -i 's/.*( \(.*\) ).*/\1/' $(HCELL)/$(AREA)_coordinates.csv
 	sed -i 's/ /,/' $(HCELL)/$(AREA)_coordinates.csv
-	sed -i '1 i\x,y' $(HCELL)/$(AREA)_coordinates.csv
+	python3 $(HCELL)/main.py $(HCELL)/$(AREA)_coordinates.csv
 
 # Clean workspace
 clean: 
