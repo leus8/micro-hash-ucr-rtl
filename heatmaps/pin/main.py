@@ -26,6 +26,9 @@ def main (argv):
     x = [a+320 for a in xp] # adds x-coordinate offset
     y = [b+300 for b in yp] # adds y-coordinate offset
 
+    #x = list(map(int,xp))
+    #y = list(map(int,yp))
+
     # casts list to ndarray
     x = np.array(x) 
     y = np.array(y)
@@ -38,12 +41,12 @@ def main (argv):
         print(y)
 
     # generates cell heatmap
-    nbins = 473 # number of bins
-    plt.hist2d(x,y,bins=[np.arange(0,47360,nbins),np.arange(0,33300,nbins)],cmap="viridis")
+    nbins = 500 # number of bins
+    plt.hist2d(x,y,bins=[np.arange(0,47360,nbins),np.arange(0,33300,nbins)],norm=LogNorm())
     plt.xlabel("x coordinate ( 1 unit = 100 microns)")
     plt.ylabel("y coordinate ( 1 unit = 100 microns)")
     plt.colorbar()
-    plt.savefig('heatmaps/cell/cell_density.png')
+    plt.savefig('heatmaps/pin/pin_density.png')
 
 if __name__ == '__main__':
     main(sys.argv[1])

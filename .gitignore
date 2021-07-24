@@ -12,3 +12,9 @@ sistema.par
 temp
 heatmaps/cell/sistema_area_coordinates.csv
 heatmaps/cell/sistema_speed_coordinates.csv
+heatmaps/cell/cell_density_area.png
+heatmaps/cell/cell_density_speed.png
+heatmaps/pin/sistema_area_pins.csv
+heatmaps/pin/sistema_speed_pins.csv
+heatmaps/pin/pin_density_area.png
+heatmaps/pin/pin_density_speed.png

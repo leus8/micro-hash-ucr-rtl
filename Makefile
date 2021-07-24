@@ -9,6 +9,7 @@ AREA_SYNTH = $(AREA)_synth
 AREA_SYNTH_TB = $(AREA_SYNTH)_tb
 
 HCELL = heatmaps/cell
+HPIN = heatmaps/pin
 
 
 all: sim
@@ -132,6 +133,7 @@ heatmap-cell-area:
 	sed -i 's/.*( \(.*\) ).*/\1/' $(HCELL)/$(AREA)_coordinates.csv
 	sed -i 's/ /,/' $(HCELL)/$(AREA)_coordinates.csv
 	python3 $(HCELL)/main.py $(HCELL)/$(AREA)_coordinates.csv
+	mv $(HCELL)/cell_density.png $(HCELL)/cell_density_area.png
 
 # Generate cell density heatmap for speed system
 heatmap-cell-speed:
@@ -141,13 +143,34 @@ heatmap-cell-speed:
 	sed -i 's/.*( \(.*\) ).*/\1/' $(HCELL)/$(SPEED)_coordinates.csv
 	sed -i 's/ /,/' $(HCELL)/$(SPEED)_coordinates.csv
 	python3 $(HCELL)/main.py $(HCELL)/$(SPEED)_coordinates.csv
+	mv $(HCELL)/cell_density.png $(HCELL)/cell_density_speed.png
 
 # Generate cell density heatmap for both systems
 heatmap-cell: heatmap-cell-area heatmap-cell-speed
+
+# Generate pin density heatmap for area system
+heatmap-pin-area:
+	sed -n -e '/PINS.*;/,/END PINS/ p' layout/$(AREA).def | grep "+ PLACED" > $(HPIN)/$(AREA)_pins.csv
+	sed -i 's/.*( \(.*\) ).*/\1/' $(HPIN)/$(AREA)_pins.csv
+	sed -i 's/ /,/' $(HPIN)/$(AREA)_pins.csv
+	python3 $(HPIN)/main.py $(HPIN)/$(AREA)_pins.csv
+	mv $(HPIN)/pin_density.png $(HPIN)/pin_density_area.png
+
+# Generate pin density heatmap for speed system
+heatmap-pin-speed:
+	sed -n -e '/PINS.*;/,/END PINS/ p' layout/$(SPEED).def | grep "+ PLACED" > $(HPIN)/$(SPEED)_pins.csv
+	sed -i 's/.*( \(.*\) ).*/\1/' $(HPIN)/$(SPEED)_pins.csv
+	sed -i 's/ /,/' $(HPIN)/$(SPEED)_pins.csv
+	python3 $(HPIN)/main.py $(HPIN)/$(SPEED)_pins.csv
+	mv $(HPIN)/pin_density.png $(HPIN)/pin_density_speed.png
+
+# Generate pin density heatmap for both systems
+heatmap-pin: heatmap-pin-area heatmap-pin-speed
 
 # Clean workspace
 clean: 
 	qflow cleanup $(SPEED)
 	qflow cleanup $(AREA)
 	rm -rf sim waves layout synthesis log source/*.ys source/*.blif *.sh *.magicrc test/sistema_formal
-	rm heatmaps/cell/sistema_area_coordinates.csv heatmaps/cell/sistema_speed_coordinates.csv
+	find $(HCELL)/ -type f -not -name 'main.py' -delete
+	find $(HPIN)/ -type f -not -name 'main.py' -delete
