@@ -93,6 +93,22 @@ or
 ```
 make sta-speed
 ```
+### Generate cell heatmap
+
+> Run Qflow up until DRC
+
+for both systems:
+```
+make heatmap-cell
+```
+for area system:
+```
+make heatmap-cell-area
+```
+for speed system:
+```
+make heatmap-cell-speed
+```
 ### Clean workspace
 ```
 make clean
