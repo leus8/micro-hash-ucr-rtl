@@ -93,21 +93,35 @@ or
 ```
 make sta-speed
 ```
-### Generate cell heatmap
+### Generate heatmaps
 
 > Run Qflow with initial density less than or equal to 0,7 up until DRC
 
-for both systems:
+#### Plot cell density heatmap
+For both systems:
 ```
 make heatmap-cell
 ```
-for area system:
+For area system:
 ```
 make heatmap-cell-area
 ```
-for speed system:
+For speed system:
 ```
 make heatmap-cell-speed
+```
+#### Plot pin density heatmap
+For both systems:
+```
+make heatmap-pin
+```
+For area system:
+```
+make heatmap-pin-area
+```
+For speed system:
+```
+make heatmap-pin-speed
 ```
 ### Clean workspace
 ```
