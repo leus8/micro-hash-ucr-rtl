@@ -2,35 +2,49 @@ import sys
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from matplotlib.colors import LogNorm
 
 def main (argv):
 
-    filename = sys.argv[1]
+    debug = 0 # activates debug mode
 
-    print(filename)
+    filename = sys.argv[1] # reads the filename from command argument
 
-    x = []
-    y = []
-    data = []
+    # initializes coordinates list
+    xp = []
+    yp = []
 
     with open(filename) as file:
 
+        # cvs file iterator
         for row in csv.reader(file):
-            x.append(row[0])
-            y.append(row[1])
-            data.append(row)
+            xp.append(row[0]) # maps x coordinates to xp
+            yp.append(row[1]) # maps y coordinates to yp
 
-    #x = [a+320 for a in x]
-    #y = [a+300 for a in y]
-    x = np.array(x)
+    xp = list(map(int,xp)) # casts list xp type string to type int
+    yp = list(map(int,yp)) # casts list yp to type string to type int
+    x = [a+320 for a in xp] # adds x-coordinate offset
+    y = [b+300 for b in yp] # adds y-coordinate offset
+
+    #x = list(map(int,xp))
+    #y = list(map(int,yp))
+
+    # casts list to ndarray
+    x = np.array(x) 
     y = np.array(y)
-    data = np.array(data)
-    print(x)
-    print(y)
-    plt.hist2d(x,y,bins=[np.arange(0,47360,500),np.arange(0,33300,500)],norm=LogNorm())
-    #ax = sns.heatmap(data)
+
+    # for debugging
+    if (debug):
+        print(xp)
+        print(yp)
+        print(x)  
+        print(y)
+
+    # generates cell heatmap
+    nbins = 473 # number of bins
+    plt.hist2d(x,y,bins=[np.arange(0,47360,nbins),np.arange(0,33300,nbins)],cmap="viridis")
+    plt.xlabel("x coordinate ( 1 unit = 100 microns)")
+    plt.ylabel("y coordinate ( 1 unit = 100 microns)")
     plt.colorbar()
     plt.show()
 

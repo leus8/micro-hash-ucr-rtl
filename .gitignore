@@ -11,3 +11,4 @@ test/sistema_formal
 sistema.par
 temp
 heatmaps/cell/sistema_area_coordinates.csv
+heatmaps/cell/sistema_speed_coordinates.csv

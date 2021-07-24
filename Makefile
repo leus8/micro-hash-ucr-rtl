@@ -133,6 +133,18 @@ heatmap-cell-area:
 	sed -i 's/ /,/' $(HCELL)/$(AREA)_coordinates.csv
 	python3 $(HCELL)/main.py $(HCELL)/$(AREA)_coordinates.csv
 
+# Generate cell density heatmap for speed system
+heatmap-cell-speed:
+	sed -n -e '/COMPONENTS.*;/,/END COMPONENTS/ p' layout/$(SPEED).def > $(HCELL)/$(SPEED)_coordinates.csv
+	sed -i '/- FILL/ d' $(HCELL)/$(SPEED)_coordinates.csv
+	sed -i '1d;$$d' $(HCELL)/$(SPEED)_coordinates.csv
+	sed -i 's/.*( \(.*\) ).*/\1/' $(HCELL)/$(SPEED)_coordinates.csv
+	sed -i 's/ /,/' $(HCELL)/$(SPEED)_coordinates.csv
+	python3 $(HCELL)/main.py $(HCELL)/$(SPEED)_coordinates.csv
+
+# Generate cell density heatmap for both systems
+heatmap-cell: heatmap-cell-area heatmap-cell-speed
+
 # Clean workspace
 clean: 
 	qflow cleanup $(SPEED)
