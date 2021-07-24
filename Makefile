@@ -150,3 +150,4 @@ clean:
 	qflow cleanup $(SPEED)
 	qflow cleanup $(AREA)
 	rm -rf sim waves layout synthesis log source/*.ys source/*.blif *.sh *.magicrc test/sistema_formal
+	rm heatmaps/cell/sistema_area_coordinates.csv heatmaps/cell/sistema_speed_coordinates.csv
