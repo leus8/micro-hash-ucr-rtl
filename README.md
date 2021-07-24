@@ -95,7 +95,7 @@ make sta-speed
 ```
 ### Generate cell heatmap
 
-> Run Qflow up until DRC
+> Run Qflow with initial density <= 0,7 up until DRC
 
 for both systems:
 ```
