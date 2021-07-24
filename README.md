@@ -93,6 +93,22 @@ or
 ```
 make sta-speed
 ```
+### Generate cell heatmap
+
+> Run Qflow with initial density less than or equal to 0,7 up until DRC
+
+for both systems:
+```
+make heatmap-cell
+```
+for area system:
+```
+make heatmap-cell-area
+```
+for speed system:
+```
+make heatmap-cell-speed
+```
 ### Clean workspace
 ```
 make clean
