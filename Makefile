@@ -9,6 +9,7 @@ AREA_SYNTH = $(AREA)_synth
 AREA_SYNTH_TB = $(AREA_SYNTH)_tb
 
 HCELL = heatmaps/cell
+HMETAL = heatmaps/metal
 HPIN = heatmaps/pin
 
 
@@ -147,6 +148,35 @@ heatmap-cell-speed:
 
 # Generate cell density heatmap for both systems
 heatmap-cell: heatmap-cell-area heatmap-cell-speed
+
+# Generate metal density heatmap for area system
+heatmap-metal-area:
+	sed -n -e '/NEW metal4/ p' layout/$(AREA).def > $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i '/viagen/ d' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/^\(  NEW metal4 \)*//' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/M.*//' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/[^0-9* ]*//g' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/^\( \)*//' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/  */ /g' $(HMETAL)/$(AREA)_coordinates.csv
+	sed -i 's/ /,/g' $(HMETAL)/$(AREA)_coordinates.csv
+	python3 $(HMETAL)/main.py $(HMETAL)/$(AREA)_coordinates.csv
+	mv $(HMETAL)/metal_density.png $(HMETAL)/metal_density_area.png	
+
+# Generate metal density heatmap for speed system
+heatmap-metal-speed:
+	sed -n -e '/NEW metal4/ p' layout/$(SPEED).def > $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i '/viagen/ d' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/^\(  NEW metal4 \)*//' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/M.*//' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/[^0-9* ]*//g' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/^\( \)*//' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/  */ /g' $(HMETAL)/$(SPEED)_coordinates.csv
+	sed -i 's/ /,/g' $(HMETAL)/$(SPEED)_coordinates.csv
+	python3 $(HMETAL)/main.py $(HMETAL)/$(SPEED)_coordinates.csv
+	mv $(HMETAL)/metal_density.png $(HMETAL)/metal_density_speed.png	
+
+# Generate metal density heatmap for both systems
+heatmap-metal: heatmap-metal-area heatmap-metal-speed
 
 # Generate pin density heatmap for area system
 heatmap-pin-area:
