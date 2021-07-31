@@ -26,9 +26,6 @@ def main (argv):
     x = [a+320 for a in xp] # adds x-coordinate offset
     y = [b+300 for b in yp] # adds y-coordinate offset
 
-    #x = list(map(int,xp))
-    #y = list(map(int,yp))
-
     # casts list to ndarray
     x = np.array(x) 
     y = np.array(y)
@@ -37,12 +34,16 @@ def main (argv):
     if (debug):
         print(xp)
         print(yp)
-        print(x)  
+        print(x)
         print(y)
 
-    # generates cell heatmap
-    nbins = 500 # number of bins
-    plt.hist2d(x,y,bins=[np.arange(0,47360,nbins),np.arange(0,33300,nbins)],norm=LogNorm())
+    # generates pin heatmap
+    if (filename == "heatmaps/pin/sistema_area_pins.csv"):
+        nbins = 500 # number of bins
+        plt.hist2d(x,y,bins=[np.arange(0,49040+nbins,nbins),np.arange(0,46600+nbins,nbins)],norm=LogNorm())
+    else:
+        nbins = 900 # number of bins
+        plt.hist2d(x,y,bins=[np.arange(0,99040+nbins,nbins),np.arange(0,94600+nbins,nbins)],norm=LogNorm())
     plt.xlabel("x coordinate ( 1 unit = 100 microns)")
     plt.ylabel("y coordinate ( 1 unit = 100 microns)")
     plt.colorbar()

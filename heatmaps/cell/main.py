@@ -38,8 +38,12 @@ def main (argv):
         print(y)
 
     # generates cell heatmap
-    nbins = 473 # number of bins
-    plt.hist2d(x,y,bins=[np.arange(0,47360,nbins),np.arange(0,33300,nbins)],cmap="viridis")
+    if (filename == "heatmaps/cell/sistema_area_coordinates.csv"):
+        nbins = 500 # number of bins
+        plt.hist2d(x,y,bins=[np.arange(0,49040,nbins),np.arange(0,46600,nbins)],cmap="viridis")
+    else:
+        nbins = 900 # number of bins
+        plt.hist2d(x,y,bins=[np.arange(0,99040,nbins),np.arange(0,94600,nbins)],cmap="viridis")
     plt.xlabel("x coordinate ( 1 unit = 100 microns)")
     plt.ylabel("y coordinate ( 1 unit = 100 microns)")
     plt.colorbar()
