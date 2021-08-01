@@ -14,6 +14,15 @@ def main (argv):
     xp = []
     yp = []
 
+    # DEF CONFIG
+
+    # Die length offset
+    xoffset = 320
+    yoffset = 300
+
+    # Number of tracks for metal 4
+    num_tracks = 614
+
     with open(filename) as file:
         # cvs file iterator
         for row in csv.reader(file):
@@ -33,9 +42,10 @@ def main (argv):
 
     xp = list(map(int,xp)) # casts list xp type string to type int
     yp = list(map(int,yp)) # casts list yp to type string to type int
-    
-    x = [a+320 for a in xp] # adds x-coordinate offset
-    y = [b+300 for b in yp] # adds y-coordinate offset
+
+    # Add offsets to each entry
+    x = [a+xoffset for a in xp]
+    y = [b+yoffset for b in yp]
 
     # casts list to ndarray
     x = np.array(x) 
@@ -48,13 +58,38 @@ def main (argv):
         print(x)  
         print(y)
 
-    # generates cell heatmap
-    nbins = 400 # number of bins
-    plt.hist2d(x,y,bins=[np.arange(0,99040,nbins),np.arange(0,94600,nbins)],cmap="viridis")
+    # Generate heatmap and save image
+    nbins = 20 # number of bins
+    h = plt.hist2d(x,y,bins=nbins,cmap="viridis")
     plt.xlabel("x coordinate ( 1 unit = 100 microns)")
     plt.ylabel("y coordinate ( 1 unit = 100 microns)")
     plt.colorbar()
     plt.savefig('heatmaps/metal/metal_density.png')
+
+    # Histogram post processing
+    
+    # Histogram values for each bin
+    # rotated by 90 degrees to match generated image
+    bin_values = np.rot90(h[0])
+
+    # Distance between Y axis bins
+    yedges = h[2]
+
+    # Average track per bin
+    avg_track_num = num_tracks/nbins
+
+    print("Average tracks per bin:", avg_track_num)
+
+    # Maximum track usage
+    max_track_usage = (yedges[1] - yedges[0])*avg_track_num
+
+    # Track usage for every bin
+    track_usage = [[int((bin/max_track_usage)*100) for bin in bins] for bins in bin_values]
+
+    # Print track usage
+    print("Track usage per bin (%):")
+    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
+      for row in track_usage]))
 
 if __name__ == '__main__':
     main(sys.argv[1])
