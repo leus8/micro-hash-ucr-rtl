@@ -110,6 +110,19 @@ For speed system:
 ```
 make heatmap-cell-speed
 ```
+#### Plot metal 4 density heatmap
+For both systems:
+```
+make heatmap-metal
+```
+For area system:
+```
+make heatmap-metal-area
+```
+For speed system:
+```
+make heatmap-metal-speed
+```
 #### Plot pin density heatmap
 For both systems:
 ```
